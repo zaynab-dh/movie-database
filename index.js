@@ -37,7 +37,7 @@ app.get('/movies/create', (req, res)=> {
     
 });
 app.get('/movies/read', (req, res)=> {
-    res.send({status:200, data:m});
+    res.send({status:200, data:movies});
     
 });
 app.get('/movies/update', (req, res)=> {
