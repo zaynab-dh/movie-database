@@ -94,8 +94,12 @@ app.get('/movies/update', (req, res)=> {
     res.send({status:200, message:"Hello, "});
     
 });
-app.get('/movies/delete', (req, res)=> {
-    res.send({status:200, message:"Hello, "});
+app.get('/movies/delete/:id', (req, res)=> {
+    let iddl = req.params.id;
+    const filtermv = movies.filter(({ id }) => id !== parseInt(req.params.id));
+    const mov = movies.find(c=>c.id===parseInt(req.params.id));
+    if(!mov)res.send({status:404, error:true, message:'the movie id does not exist'});
+    res.send({status:200, data:filtermv});
     
 });
   
