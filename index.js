@@ -1,7 +1,11 @@
 const express = require('express');
 const port = 3000;
 const app = express();
+// const mongoose = require('mongoose');
+const MongoClient    = require('mongodb').MongoClient;
+const bodyParser     = require('body-parser');
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 const router = express.Router();
 const date = new Date();
 const hour = date.getHours();
@@ -66,60 +70,104 @@ app.get('/movies/read/id/:id', (req, res)=> {
     if(!mov)res.send({status:404, error:true, message:'the movie id does not exist'});
     res.send({status:200, data:mov}); 
 });
-app.get('/movies/add', (req, res)=> {
-    let ttl = req.query.title;
-    let yr = req.query.year;
-    let rt = req.query.rating;
+// app.get('/movies/add', (req, res)=> {
+//     let ttl = req.query.title;
+//     let yr = req.query.year;
+//     let rt = req.query.rating;
 
-    if(ttl === '' || yr === '' || yr.length !== 4 || isNaN(yr))
-    {
-        res.send({status:403, error:true, message:'you cannot create a movie without providing a title and a year'}) 
-    }
-    else
-    {
-        if (rt == '')
+//     if(ttl === '' || yr === '' || yr.length !== 4 || isNaN(yr))
+//     {
+//         res.send({status:403, error:true, message:'you cannot create a movie without providing a title and a year'}) 
+//     }
+//     else
+//     {
+//         if (rt == '')
+//         {
+//             rt = 4;
+//         }
+//         const newMovie = {
+//             //id:movies.length+1,
+//             title:ttl,
+//             year:yr,
+//             rating:rt,
+//         };
+//         movies.push(newMovie);
+//         res.send({status:200, data:movies}); 
+//     }
+   
+// });
+app.post('/movies/add', (req, res)=> {
+        let ttl = req.body.title;
+        let yr = req.body.year;
+        let rt = req.body.rating;
+    
+        if(ttl === '' || yr === '' || yr.length !== 4 || isNaN(yr))
         {
-            rt = 4;
+            res.send({status:403, error:true, message:'you cannot create a movie without providing a title and a year'}) 
         }
-        const newMovie = {
-            //id:movies.length+1,
-            title:ttl,
-            year:yr,
-            rating:rt,
-        };
-        movies.push(newMovie);
-        res.send({status:200, data:movies}); 
-    }
+        else
+        {
+            if (rt == '')
+            {
+                rt = 4;
+            }
+            const newMovie = {
+                title:ttl,
+                year:yr,
+                rating:rt,
+            };
+            movies.push(newMovie);
+            res.send(movies);
+        }
    
 });
-app.get('/movies/update/:id', (req, res)=> {
+// app.get('/movies/update/:id', (req, res)=> {
+//     var ttle = req.query.title;
+//     var rate = req.query.rating;
+//     let idd = req.params.id;
+//     // movies.map((element)=>{
+//     //     if(element.id===parseInt(idd)) {
+//              if (ttle !== ''){
+//              movies[idd-1].title = ttle;
+//              }
+//             if (rate !== ''){
+//                 //if (element.id===parseInt(idd)){
+//                     movies[idd-1].rating = parseInt(rate);
+//                 //}
+//              }
+//          //}
+//     //});    
+//     res.send({status:200, data:movies}); 
+// });
+app.put('/movies/update/:id', (req, res)=> {
     var ttle = req.query.title;
     var rate = req.query.rating;
     let idd = req.params.id;
-    // movies.map((element)=>{
-    //     if(element.id===parseInt(idd)) {
              if (ttle !== ''){
              movies[idd-1].title = ttle;
              }
-            if (rate !== ''){
-                //if (element.id===parseInt(idd)){
-                    movies[idd-1].rating = parseInt(rate);
-                //}
-             }
-         //}
-    //});    
-    res.send({status:200, data:movies}); 
+            if (rate !== ''){ 
+                movies[idd-1].rating = parseInt(rate);
+             }   
+    res.send(movies); 
 });
 
-app.get('/movies/delete/:id', (req, res)=> {
+// app.get('/movies/delete/:id', (req, res)=> {
+//     let iddl = req.params.id-1;
+//     const mov = movies[iddl];
+//     //const filtermv = movies.filter((movies[id]) => movies[id] !== parseInt(iddl));
+//     movies.splice(iddl, 1);
+//     if(!mov)res.send({status:404, error:true, message:'the movie id does not exist'});
+//     //res.send({status:200, data:filtermv});
+//     res.send({status:200, data:movies});
+    
+// });
+app.delete('/movies/delete/:id', (req, res)=> {
     let iddl = req.params.id-1;
     const mov = movies[iddl];
-    //const filtermv = movies.filter((movies[id]) => movies[id] !== parseInt(iddl));
     movies.splice(iddl, 1);
     if(!mov)res.send({status:404, error:true, message:'the movie id does not exist'});
-    //res.send({status:200, data:filtermv});
-    res.send({status:200, data:movies});
-    
+    res.send(movies);
 });
   
   app.listen(port, () => {
