@@ -7,10 +7,10 @@ const date = new Date();
 const hour = date.getHours();
 var seconds = date.getSeconds();
 const movies = [
-    { id: 1,title: 'Jaws', year: 1975, rating: 8 },
-    { id: 2,title: 'Avatar', year: 2009, rating: 7.8 },
-    { id: 3,title: 'Brazil', year: 1985, rating: 8 },
-    { id: 4,title: 'الإرهاب والكباب‎', year: 1992, rating: 6.2 }
+    {title: 'Jaws', year: 1975, rating: 8 },
+    {title: 'Avatar', year: 2009, rating: 7.8 },
+    {title: 'Brazil', year: 1985, rating: 8 },
+    {title: 'الإرهاب والكباب‎', year: 1992, rating: 6.2 }
 ]
 
 app.get('/', (req, res) => {
@@ -60,7 +60,9 @@ app.get('/movies/read/by-title', (req, res)=> {
     res.send({status:200, data:movie}); 
 });
 app.get('/movies/read/id/:id', (req, res)=> {
-    const mov = movies.find(c=>c.id===parseInt(req.params.id));
+    let id = req.params.id;
+    //const mov = movies.find(c=>movies[id]===parseInt(id));
+    const mov = movies[id-1];
     if(!mov)res.send({status:404, error:true, message:'the movie id does not exist'});
     res.send({status:200, data:mov}); 
 });
@@ -80,7 +82,7 @@ app.get('/movies/add', (req, res)=> {
             rt = 4;
         }
         const newMovie = {
-            id:movies.length+1,
+            //id:movies.length+1,
             title:ttl,
             year:yr,
             rating:rt,
@@ -90,16 +92,33 @@ app.get('/movies/add', (req, res)=> {
     }
    
 });
-app.get('/movies/update', (req, res)=> {
-    res.send({status:200, message:"Hello, "});
-    
+app.get('/movies/update/:id', (req, res)=> {
+    var ttle = req.query.title;
+    var rate = req.query.rating;
+    let idd = req.params.id;
+    // movies.map((element)=>{
+    //     if(element.id===parseInt(idd)) {
+             if (ttle !== ''){
+             movies[idd-1].title = ttle;
+             }
+            if (rate !== ''){
+                //if (element.id===parseInt(idd)){
+                    movies[idd-1].rating = parseInt(rate);
+                //}
+             }
+         //}
+    //});    
+    res.send({status:200, data:movies}); 
 });
+
 app.get('/movies/delete/:id', (req, res)=> {
-    let iddl = req.params.id;
-    const filtermv = movies.filter(({ id }) => id !== parseInt(req.params.id));
-    const mov = movies.find(c=>c.id===parseInt(req.params.id));
+    let iddl = req.params.id-1;
+    const mov = movies[iddl];
+    //const filtermv = movies.filter((movies[id]) => movies[id] !== parseInt(iddl));
+    movies.splice(iddl, 1);
     if(!mov)res.send({status:404, error:true, message:'the movie id does not exist'});
-    res.send({status:200, data:filtermv});
+    //res.send({status:200, data:filtermv});
+    res.send({status:200, data:movies});
     
 });
   
