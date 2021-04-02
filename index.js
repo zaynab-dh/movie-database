@@ -3,10 +3,13 @@ const port = 3000;
 const app = express();
 // const mongoose = require('mongoose');
 const MongoClient    = require('mongodb').MongoClient;
+const db             = require('./config/db');
 const bodyParser     = require('body-parser');
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const router = express.Router();
+// MongoClient.connect(db.url, (err, database) => {  if (err) return console.log(err)  };                      // Make sure you add the database name and not the collection name  const database = database.db("note-api")  require('./app/routes')(app, database);
+// const database = database.db("MovieDB-app");
 const date = new Date();
 const hour = date.getHours();
 var seconds = date.getSeconds();
@@ -103,7 +106,7 @@ app.post('/movies/add', (req, res)=> {
     
         if(ttl === '' || yr === '' || yr.length !== 4 || isNaN(yr))
         {
-            res.send({status:403, error:true, message:'you cannot create a movie without providing a title and a year'}) 
+            res.status(403).send('you cannot create a movie without providing a title and a year') 
         }
         else
         {
@@ -166,7 +169,7 @@ app.delete('/movies/delete/:id', (req, res)=> {
     let iddl = req.params.id-1;
     const mov = movies[iddl];
     movies.splice(iddl, 1);
-    if(!mov)res.send({status:404, error:true, message:'the movie id does not exist'});
+    if(!mov)res.status(404).send('the movie id does not exist');
     res.send(movies);
 });
   
